@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ruang Riang Padang</title>
+
+  <style>
+    /* ---------- Fonts & Colors ---------- */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+
+    :root {
+      --green: #227A41;
+      --cream: #F3EBDD;
+      --soft-black: rgba(0, 0, 0, 0.65);
+    }
+
+    /* ---------- Reset ---------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    /* ---------- Base ---------- */
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--cream);
+      color: var(--green);
+      padding-top: 70px;
+      /* space for fixed header */
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      z-index: 1100;
+      transition: background .28s ease, backdrop-filter .28s ease;
+    }
+
+    header.scrolled {
+      background: rgba(34, 122, 65, 0.66);
+      backdrop-filter: blur(6px);
+    }
+
+    .nav-left a {
+      color: #F3EBDD;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .nav-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .nav-center img {
+      height: 40px;
+      display: block;
+    }
+
+    .nav-right a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* SVG icon style */
+    .nav-right svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff;
+      transition: transform .18s ease, fill .18s ease;
+    }
+
+    .nav-right svg:hover {
+      transform: scale(1.08);
+      fill: #ffd966;
+    }
+
+    /* ---------- Slider ---------- */
+    .slider {
+      width: 100%;
+      height: 260px;
+      overflow: hidden;
+      background: #ddd;
+    }
+
+    .slides {
+      display: flex;
+      height: 100%;
+      transition: transform .75s cubic-bezier(.22, .9, .33, 1);
+    }
+
+    .slides img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    /* ---------- Sections ---------- */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 18px;
+    }
+
+    /* Titles */
+    h2 {
+      font-size: 1.4rem;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #1f4f33;
+    }
+
+    /* ---------- BEST MENU (cards with image & overlay) ---------- */
+    .menu-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .menu-title span {
+      font-size: 0.75rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: .75;
+    }
+
+    .menu-title h2 {
+      font-size: 1.6rem;
+      margin-top: 4px;
+    }
+
+    /* actions */
+    .menu-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-reservasi {
+      background: var(--green);
+      color: var(--cream);
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .btn-reservasi:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .14);
+      background: #1b5f34;
+    }
+
+    .btn-outline {
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: 2px solid var(--green);
+      text-decoration: none;
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .btn-outline:hover {
+      background: var(--green);
+      color: var(--cream);
+    }
+
+    /* grid */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    /* card */
+    .menu-item {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #000;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, .12);
+      transition: transform .38s ease, box-shadow .38s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* image */
+    .menu-item img {
+      display: block;
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      transition: transform .6s ease;
+    }
+
+    /* overlay (hidden by default) */
+    .menu-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+      background: linear-gradient(to top, rgba(0, 0, 0, .78), rgba(0, 0, 0, .15));
+      color: #fff;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .32s ease, transform .32s ease;
+      text-align: center;
+    }
+
+    /* overlay text */
+    .menu-overlay h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .menu-overlay span {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.9rem;
+      opacity: 0.95;
+    }
+
+    /* hover - desktop */
+    .menu-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 38px rgba(0, 0, 0, .22);
+    }
+
+    .menu-item:hover img {
+      transform: scale(1.08);
+    }
+
+    .menu-item:hover .menu-overlay {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* active class (for touch devices) */
+    .menu-item.menu-active .menu-overlay {
+      opacity: 1;
+      transform: none;
+    }
+
+    .menu-item.menu-active img {
+      transform: scale(1.08);
+    }
+
+    /* ---------- Menu footer button ---------- */
+    .menu-footer {
+      margin-top: 28px;
+      text-align: center;
+    }
+
+    .btn-menu {
+      display: inline-block;
+      padding: 12px 26px;
+      border-radius: 28px;
+      border: 2px solid var(--green);
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .btn-menu:hover {
+      background: var(--green);
+      color: var(--cream);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, .15);
+    }
+
+    /* ---------- Gallery ---------- */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+    }
+
+    .gallery img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+
+    /* ---------- Location ---------- */
+    .map-iframe {
+      width: 100%;
+      height: 260px;
+      border: 0;
+      border-radius: 12px;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      background: var(--green);
+      color: var(--cream);
+      padding: 18px;
+      text-align: center;
+      margin-top: 36px;
+      font-size: .9rem;
+    }
+
+    /* ---------- Responsive tweaks ---------- */
+    @media (min-width:768px) {
+      body {
+        padding-top: 74px;
+      }
+
+      header {
+        height: 74px;
+      }
+
+      .slider {
+        height: 380px;
+      }
+
+      .menu-item img {
+        height: 260px;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (min-width:1024px) {
+      .slider {
+        height: 480px;
+      }
+
+      .menu-item img {
+        height: 300px;
+      }
+
+      section.main {
+        padding: 56px 20px;
+      }
+
+      h2 {
+        font-size: 1.85rem;
+      }
+    }
+
+    /* small devices - make overlay show on tap friendly */
+    @media (max-width:480px) {
+      .menu-item img {
+        height: 180px;
+      }
+
+      .menu-actions {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+        flex-direction: column;
+      }
+
+      .btn-outline,
+      .btn-reservasi {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    /* ---------- TIKTOK REVIEW ---------- */
+    .tiktok-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+      justify-items: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="nav-left"><a href="#menu">Menu</a></div>
+    <div class="nav-left"><a href="#Tentang Kami">RUANG RIANG</a></div>
+
+    <!-- <div class="nav-center">
+    <img src="assets/logo.jpg" alt="Ruang Riang Logo">
+  </div> OPSIONAL -->
+
+    <div class="nav-right">
+      <a href="https://www.google.com/maps?q=-0.9547421788730486,100.39218746625941" target="_blank"
+        aria-label="Buka lokasi di Google Maps">
+        <!-- simple map pin SVG -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path
+            d="M12 2C8.134 2 5 5.134 5 9c0 4.657 5.424 10.34 6.217 11.184.29.312.76.312 1.05 0C13.576 19.34 19 13.657 19 9c0-3.866-3.134-7-7-7zm0 9.75A2.75 2.75 0 1 1 12 6.25a2.75 2.75 0 0 1 0 5.5z" />
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- SLIDER -->
+  <div class="slider">
+    <div class="slides">
+      <img src="assets/slide1.jpg" alt="Ruang Riang 1">
+      <img src="assets/slide2.jpg" alt="Ruang Riang 2">
+      <img src="assets/slide3.jpg" alt="Ruang Riang 3">
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ABOUT -->
+    <section id="Tentang Kami">
+      <h2>Tentang Kami</h2>
+      <p>Ruang Riang adalah warkop santai di Padang yang nyaman untuk nongkrong lama tanpa sungkan. Datang untuk ngopi,
+        bekerja, atau sekadar berbagi cerita dengan suasana hangat dan harga ramah di kantong.</p>
+      <p><strong>Setiap hari</strong> pukul 10.00 sampai 03.00 WIB</p>
+    </section>
+
+    <!-- BEST MENU -->
+    <section id="menu" aria-label="Best Menu">
+      <div class="menu-header">
+        <div class="menu-title">
+          <h2>Menu Spesial</h2>
+        </div>
+
+        <div class="menu-actions">
+          <a class="btn-reservasi" href="https://wa.me/6281234555816" target="_blank">Reservasi</a>
+        </div>
+      </div>
+
+      <div class="menu-grid">
+        <!-- CARD 1 -->
+        <article class="menu-item" data-name="Kosuri + Ice Cream" tabindex="0">
+          <img src="assets/menu/kosuri.jpg" alt="Kosuri + Ice Cream">
+          <div class="menu-overlay" aria-hidden="true">
+            <div>
+              <h3>Kosuri + Ice Cream</h3>
+              <span>Rp 27.000</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 2 -->
+        <article class="menu-item" data-name="Chococox + Ice Cream" tabindex="0">
+          <img src="assets/menu/chococox.jpg" alt="Chococox + Ice Cream">
+          <div class="menu-overlay" aria-hidden="true">
+            <div>
+              <h3>Chococox + Ice Cream</h3>
+              <span>Rp 27.000</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 3 -->
+        <article class="menu-item" data-name="Party Toast" tabindex="0">
+          <img src="assets/menu/partytoast.jpg" alt="Party Toast">
+          <div class="menu-overlay" aria-hidden="true">
+            <div>
+              <h3>Party Toast</h3>
+              <span>Rp 30.000</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- CARD 4 -->
+        <article class="menu-item" data-name="Nasi Goreng" tabindex="0">
+          <img src="assets/menu/sodagembira.jpg" alt="sodagembira">
+          <div class="menu-overlay" aria-hidden="true">
+            <div>
+              <h3>Soda Gembira</h3>
+              <span>Rp 10.000</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="menu-footer">
+        <a class="btn-menu" href="menu.html">Lihat Menu Lainnya</a>
+      </div>
+    </section>
+
+    <!-- REVIEW TIME -->
+    <section aria-label="Review Time">
+      <h2>Review Time</h2>
+
+      <div class="tiktok-grid">
+        <!-- VIDEO 1 -->
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@ruangriang.pdg/video/7568725883964476692"
+          data-video-id="7568725883964476692" style="max-width:325px;min-width:280px;">
+          <section></section>
+        </blockquote>
+
+        <!-- VIDEO 2 -->
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@ruangriang.pdg/video/7575017404472806676"
+          data-video-id="7575017404472806676" style="max-width:325px;min-width:280px;">
+          <section></section>
+        </blockquote>
+
+        <!-- VIDEO 3 -->
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@ruangriang.pdg/video/7548636776173227320"
+          data-video-id="7548636776173227320" style="max-width:325px;min-width:280px;">
+          <section></section>
+        </blockquote>
+      </div>
+    </section>
+
+
+    <!-- GALLERY -->
+    <section aria-label="Galeri Suasana">
+      <h2>Galeri Suasana</h2>
+      <div class="gallery">
+        <img src="assets/galeri/slide1.jpg" alt="Suasana 1">
+        <img src="assets/galeri/slide2.jpg" alt="Suasana 2">
+        <img src="assets/galeri/slide3.jpg" alt="Suasana 3">
+      </div>
+    </section>
+
+    <!-- LOCATION -->
+    <section aria-label="Lokasi">
+      <h2>Lokasi</h2>
+      <iframe class="map-iframe"
+        src="https://www.google.com/maps?q=-0.9547421788730486,100.39218746625941&hl=id&z=18&output=embed"
+        loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Lokasi Ruang Riang"></iframe>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>© 2025 Ruang Riang Padang</footer>
+
+  <!-- SCRIPTS -->
+  <script>
+    /* Header transparency on scroll */
+    const header = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    /* Simple slider (auto) */
+    const slides = document.querySelector('.slides');
+    if (slides && slides.children.length > 1) {
+      let idx = 0;
+      const total = slides.children.length;
+      setInterval(() => {
+        idx = (idx + 1) % total;
+        slides.style.transform = `translateX(-${idx * 100}%)`;
+      }, 3000);
+    }
+
+    /* Touch-friendly overlay toggle for menu cards */
+    const menuItems = Array.from(document.querySelectorAll('.menu-item'));
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+    if (menuItems.length) {
+      // For accessibility: toggle overlay on keyboard Enter/Space
+      menuItems.forEach(item => {
+        // click/tap: toggle active class
+        item.addEventListener('click', (e) => {
+          // If on desktop with mouse, let CSS :hover handle it; but clicks still toggle for accessibility
+          if (isTouch) {
+            const already = item.classList.contains('menu-active');
+            // remove active from others
+            menuItems.forEach(i => i.classList.remove('menu-active'));
+            if (!already) item.classList.add('menu-active');
+            e.stopPropagation();
+          }
+        });
+
+        // keyboard support
+        item.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const already = item.classList.contains('menu-active');
+            menuItems.forEach(i => i.classList.remove('menu-active'));
+            if (!already) item.classList.add('menu-active');
+          }
+        });
+      });
+
+      // clicking/tapping outside closes active overlays (mobile)
+      document.addEventListener('click', (e) => {
+        if (isTouch) {
+          if (!e.target.closest('.menu-item')) {
+            menuItems.forEach(i => i.classList.remove('menu-active'));
+          }
+        }
+      });
+    }
+  </script>
+  <script async src="https://www.tiktok.com/embed.js"></script>
+
+
+</body>
+
+</html>
